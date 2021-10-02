@@ -29,8 +29,8 @@ sfdx force:source:push
 echo ""
 
 #echo "Assigning permission sets..."
-#sfdx force:user:permset:assign -n DevOps
-#echo ""
+sfdx force:user:permset:assign -n Integration
+echo ""
 
 # sfdx force:data:soql:query -q "SELECT Id FROM Opportunity" --resultformat csv > delete.csv; sfdx force:data:bulk:delete -s Opportunity -f delete.csv 
 # sfdx force:data:soql:query -q "SELECT Id FROM Case" --resultformat csv > delete.csv; sfdx force:data:bulk:delete -s Case -f delete.csv 

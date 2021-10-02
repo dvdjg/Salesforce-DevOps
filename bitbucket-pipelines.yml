@@ -40,3 +40,4 @@ pipelines:
           - | # Show computed package
             [ -f mdapi/package.xml ] && cat mdapi/package.xml
           - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL
+          - sfdx auth:logout --all

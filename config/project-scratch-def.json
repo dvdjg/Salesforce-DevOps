@@ -2,12 +2,18 @@
   "orgName": "Demo company",
   "edition": "Developer",
   "features": ["EnableSetPasswordInApi"],
+  "language": "en_US",
   "settings": {
     "lightningExperienceSettings": {
       "enableS1DesktopEnabled": true
     },
     "mobileSettings": {
       "enableS1EncryptedStoragePref2": false
+    },
+    "securitySettings": {
+        "sessionSettings": {
+            "sessionTimeout": "TwelveHours"
+        }
     }
   }
 }

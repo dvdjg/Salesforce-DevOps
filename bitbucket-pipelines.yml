@@ -1,14 +1,42 @@
-image: eldeibiz/sfdxci:0.2
+image: eldeibiz/sfdxci:0.3
 pipelines:
   default: #These commands run for all branches unless specified otherwise
     - step:
         script:
+          # By default, the CLI periodically checks for and installs updates.
+          # Disable (true) this auto-update check to improve performance of CLI commands.
+          - export SFDX_AUTOUPDATE_DISABLE=true
+
+          # Specifies the time, in seconds, that the CLI waits for the Lightning Experience custom domain to resolve and become available in a newly-created scratch org.
+          # If you get errors about My Domain not configured when you try to use a newly-created scratch org, increase this wait time.
+          - export SFDX_DOMAIN_RETRY=300
+
+          # For force:package:create, disables automatic updates to the sfdx-project.json file.
+          - export SFDX_PROJECT_AUTOUPDATE_DISABLE_FOR_PACKAGE_CREATE=true
+
+          # For force:package:version:create, disables automatic updates to the sfdx-project.json file.
+          - export SFDX_PROJECT_AUTOUPDATE_DISABLE_FOR_PACKAGE_VERSION_CREATE=true
+
+          - export TESTLEVEL=RunLocalTests
+
+          # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - pwd
+
           #Assign variables
           - echo $SFDC_PRO_URL
           - echo $SFDC_PRO_USER
+
+          # Output CLI version and plug-in information
+          - sfdx --version
+          - sfdx plugins --core
+
           #Decrypt server key
-          - openssl enc -nosalt -aes-256-cbc -d -in /server.key.enc -out server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
+          - openssl enc -nosalt -aes-256-cbc -d -in /assets/server.key.enc -out server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
+
           - sfdx force:auth:jwt:grant --clientid $CONSUMER_KEY --username $SFDC_PRO_USER --jwtkeyfile server.key --setdefaultdevhubusername --setalias sfdx-ci --instanceurl $SFDC_PRO_URL
+          - sfdx force:limits:api:display -u $SFDC_PRO_USER
           - sfdx force:source:convert -d mdapi
-          - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30
+
+          - | # Show computed package
+            [ -f mdapi/package.xml ] && cat mdapi/package.xml
+          - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL

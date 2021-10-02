@@ -12,6 +12,9 @@
 # LWC Jest coverage reports
 coverage/
 
+# Secrets
+.secrets/
+
 # Logs
 logs
 *.log
@@ -32,6 +35,9 @@ node_modules/
 # Maven
 target/
 dist/
+
+# Encoded keys
+*.key.enc
 
 # Compiled Java class files
 *.class

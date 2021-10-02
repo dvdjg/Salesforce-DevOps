@@ -1,0 +1,13 @@
+image: eldeibiz/sfdxci:0.2
+pipelines:
+  default: #These commands run for all branches unless specified otherwise
+    - step:
+        script:
+          #Assign variables
+          - echo $SFDC_PRO_URL
+          - echo $SFDC_PRO_USER
+          #Decrypt server key
+          - openssl enc -nosalt -aes-256-cbc -d -in server.key.enc -out server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
+          - sfdx force:auth:jwt:grant --clientid $CONSUMER_KEY --username $SFDC_PRO_USER --jwtkeyfile server.key --setdefaultdevhubusername --setalias sfdx-ci --instanceurl $SFDC_PRO_URL
+          - sfdx force:source:convert -d mdapi
+          - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30

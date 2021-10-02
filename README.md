@@ -16,3 +16,33 @@ The `sfdx-project.json` file contains useful configuration information for your 
 - [Salesforce CLI Setup Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_intro.htm)
 - [Salesforce DX Developer Guide](https://developer.salesforce.com/docs/atlas.en-us.sfdx_dev.meta/sfdx_dev/sfdx_dev_intro.htm)
 - [Salesforce CLI Command Reference](https://developer.salesforce.com/docs/atlas.en-us.sfdx_cli_reference.meta/sfdx_cli_reference/cli_reference.htm)
+
+
+## Structure creation
+
+git checkout main; git checkout -b pro; git push --set-upstream origin pro
+git checkout main; git checkout -b pre; git push --set-upstream origin pre
+git checkout main; git checkout -b uat; git push --set-upstream origin uat
+git checkout main; git checkout -b int; git push --set-upstream origin int
+git checkout main; git checkout -b dev; git push --set-upstream origin dev
+
+
+# Crypt the server.key
+
+openssl enc -aes-256-cbc -k <passphrase here> -P -md sha1 -nosalt
+
+# Build the docker image (use version as apropriate, ie. 0.2)
+
+$ docker build --pull --rm -f "docker\Dockerfile" -t sfdxci:0.2 "docker"
+
+$ docker push eldeibiz/sfdxci:0.2
+
+
+# Habilita pipelines en Bitbucket para tener también variables de entorno.
+
+## References
+
+- https://blog.enree.co/2019/06/setting-up-sfdx-continuous-integration-using-bitbucket-pipelines-with-docker-image.html
+
+
+- sfdx-gitlab-org: https://github.com/forcedotcom/sfdx-gitlab-org

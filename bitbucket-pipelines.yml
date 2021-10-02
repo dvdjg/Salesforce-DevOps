@@ -1,8 +1,26 @@
 image: eldeibiz/sfdxci:0.3
 pipelines:
   default: #These commands run for all branches unless specified otherwise
-    - step:
+    - step: &diff_package
         script:
+          # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
+          - pwd
+
+          - CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) 
+          - PARENT_BRANCH=$(git show-branch | grep '\*' | grep -v "$CURRENT_BRANCH" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
+          - PARENT_TRUNK=$(git show-branch | grep '\*' | grep -v "/" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
+          - COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $PARENT_BRANCH)
+          - echo "CURRENT_BRANCH=$CURRENT_BRANCH  -  PARENT_BRANCH=$PARENT_BRANCH  -  PARENT_TRUNK=$PARENT_TRUNK  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR"
+          - mkdir -p delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./delta
+          - cat delta/package/package.xml
+          - cat delta/destructiveChanges/destructiveChanges.xml
+
+  pull-requests:
+    'feature/*': # Pull request from feature branch to Trunk
+      - step: *diff_package
+      - step:
+          name: "Trunk Pull Request Validate Package"
+          script:
           # By default, the CLI periodically checks for and installs updates.
           # Disable (true) this auto-update check to improve performance of CLI commands.
           - export SFDX_AUTOUPDATE_DISABLE=true
@@ -19,10 +37,7 @@ pipelines:
 
           - export TESTLEVEL=RunLocalTests
 
-          # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
-          - pwd
-
-          #Assign variables
+          # Current variables
           - echo $SFDC_PRO_URL
           - echo $SFDC_PRO_USER
 
@@ -33,6 +48,8 @@ pipelines:
           #Decrypt server key
           - openssl enc -nosalt -aes-256-cbc -d -in /assets/server.key.enc -out server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
 
+          - cat delta/package/package.xml
+
           - sfdx force:auth:jwt:grant --clientid $CONSUMER_KEY --username $SFDC_PRO_USER --jwtkeyfile server.key --setdefaultdevhubusername --setalias sfdx-ci --instanceurl $SFDC_PRO_URL
           - sfdx force:limits:api:display -u $SFDC_PRO_USER
           - sfdx force:source:convert -d mdapi
@@ -40,4 +57,5 @@ pipelines:
           - | # Show computed package
             [ -f mdapi/package.xml ] && cat mdapi/package.xml
           - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL
+          after-script:
           - sfdx auth:logout --all

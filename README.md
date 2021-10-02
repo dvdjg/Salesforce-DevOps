@@ -41,12 +41,16 @@ $ docker push eldeibiz/sfdxci:0.2
 # Habilita pipelines en Bitbucket para tener también variables de entorno.
 
 
-# Creación de registros desde CLI:
+# Computa el package del diff entre el commit actual y el del troncal 
 
-sfdx force:data:record:create -s Account -v "Name='Marriott Marquis' BillingStreet='780 Mission St' BillingCity='San Francisco' BillingState='CA' BillingPostalCode='94103' Phone='(415) 896-1600' Website='www.marriott.com'"
-sfdx force:data:record:create -s Account -v "Name='Hilton Union Square' BillingStreet='333 O Farrell St' BillingCity='San Francisco' BillingState='CA' BillingPostalCode='94102' Phone='(415) 771-1400' Website='www.hilton.com'"
-sfdx force:data:record:create -s Account -v "Name='Hyatt' BillingStreet='5 Embarcadero Center' BillingCity='San Francisco' BillingState='CA' BillingPostalCode='94111' Phone='(415) 788-1234' Website='www.hyatt.com'"
-To
+CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) 
+PARENT_BRANCH=$(git show-branch | grep '\*' | grep -v "$CURRENT_BRANCH" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
+PARENT_TRUNK=$(git show-branch | grep '\*' | grep -v "/" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
+COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $PARENT_BRANCH)
+echo "CURRENT_BRANCH=$CURRENT_BRANCH  -  PARENT_BRANCH=$PARENT_BRANCH  -  PARENT_TRUNK=$PARENT_TRUNK  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR"
+mkdir -p delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./delta
+cat delta/package/package.xml
+
 ## References
 
 - https://blog.enree.co/2019/06/setting-up-sfdx-continuous-integration-using-bitbucket-pipelines-with-docker-image.html

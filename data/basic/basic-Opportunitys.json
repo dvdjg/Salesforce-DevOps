@@ -1,0 +1,363 @@
+{
+    "records": [
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef1"
+            },
+            "Name": "Edge SLA",
+            "Amount": 60000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef1"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef2"
+            },
+            "Name": "Edge Installation",
+            "Amount": 50000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef1"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef3"
+            },
+            "Name": "Edge Emergency Generator",
+            "Amount": 75000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "New Customer",
+            "AccountId": "@AccountRef1"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef4"
+            },
+            "Name": "Edge Emergency Generator",
+            "Amount": 35000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Id. Decision Makers",
+            "Type": "Existing Customer - Replacement",
+            "AccountId": "@AccountRef1"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef5"
+            },
+            "Name": "Burlington Textiles Weaving Plant Generator",
+            "Amount": 235000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "New Customer",
+            "AccountId": "@AccountRef2"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef6"
+            },
+            "Name": "Dickenson Mobile Generators",
+            "Amount": 15000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Qualification",
+            "Type": "New Customer",
+            "AccountId": "@AccountRef3"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef7"
+            },
+            "Name": "Grand Hotels Kitchen Generator",
+            "Amount": 15000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Id. Decision Makers",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef4"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef8"
+            },
+            "Name": "Grand Hotels Guest Portable Generators",
+            "Amount": 250000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Value Proposition",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef4"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef9"
+            },
+            "Name": "Grand Hotels Generator Installations",
+            "Amount": 350000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef4"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef10"
+            },
+            "Name": "Grand Hotels SLA",
+            "Amount": 90000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef4"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef11"
+            },
+            "Name": "Grand Hotels Emergency Generators",
+            "Amount": 210000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "New Customer",
+            "AccountId": "@AccountRef4"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef12"
+            },
+            "Name": "United Oil SLA",
+            "Amount": 120000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef5"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef13"
+            },
+            "Name": "United Oil Refinery Generators",
+            "Amount": 270000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Proposal/Price Quote",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef5"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef14"
+            },
+            "Name": "United Oil Office Portable Generators",
+            "Amount": 125000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Negotiation/Review",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef5"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef15"
+            },
+            "Name": "United Oil Installations",
+            "Amount": 270000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Negotiation/Review",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef5"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef16"
+            },
+            "Name": "United Oil Plant Standby Generators",
+            "Amount": 675000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Needs Analysis",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef5"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef17"
+            },
+            "Name": "United Oil Standby Generators",
+            "Amount": 120000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef5"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef18"
+            },
+            "Name": "United Oil Emergency Generators",
+            "Amount": 440000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef5"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef19"
+            },
+            "Name": "United Oil Installations",
+            "Amount": 235000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef5"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef20"
+            },
+            "Name": "United Oil Refinery Generators",
+            "Amount": 915000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "New Customer",
+            "AccountId": "@AccountRef5"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef21"
+            },
+            "Name": "United Oil Installations",
+            "Amount": 270000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef5"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef22"
+            },
+            "Name": "Express Logistics Standby Generator",
+            "Amount": 220000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "New Customer",
+            "AccountId": "@AccountRef6"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef23"
+            },
+            "Name": "Express Logistics Portable Truck Generators",
+            "Amount": 80000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Value Proposition",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef6"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef24"
+            },
+            "Name": "Express Logistics SLA",
+            "Amount": 120000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Perception Analysis",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef6"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef25"
+            },
+            "Name": "University of AZ SLA",
+            "Amount": 90000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef7"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef26"
+            },
+            "Name": "University of AZ Portable Generators",
+            "Amount": 50000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "New Customer",
+            "AccountId": "@AccountRef7"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef27"
+            },
+            "Name": "University of AZ Installations",
+            "Amount": 100000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Proposal/Price Quote",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef7"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef28"
+            },
+            "Name": "GenePoint Lab Generators",
+            "Amount": 60000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Id. Decision Makers",
+            "AccountId": "@AccountRef9"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef29"
+            },
+            "Name": "GenePoint SLA",
+            "Amount": 30000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "Existing Customer - Upgrade",
+            "AccountId": "@AccountRef9"
+        },
+        {
+            "attributes": {
+                "type": "Opportunity",
+                "referenceId": "OpportunityRef30"
+            },
+            "Name": "GenePoint Standby Generator",
+            "Amount": 85000,
+            "CloseDate": "2019-08-11",
+            "StageName": "Closed Won",
+            "Type": "New Customer",
+            "AccountId": "@AccountRef9"
+        }
+    ]
+}

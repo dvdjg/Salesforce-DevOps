@@ -15,6 +15,9 @@ coverage/
 # Secrets
 .secrets/
 
+# Create your local copy from bin/.common-template.sh
+bin/.common.sh
+
 # Logs
 logs
 *.log

@@ -1,0 +1,34 @@
+[
+    {
+        "sobject": "Account",
+        "saveRefs": true,
+        "resolveRefs": false,
+        "files": [
+            "basic-Accounts.json"
+        ]
+    },
+    {
+        "sobject": "Contact",
+        "saveRefs": false,
+        "resolveRefs": true,
+        "files": [
+            "basic-Contacts.json"
+        ]
+    },
+    {
+        "sobject": "Case",
+        "saveRefs": false,
+        "resolveRefs": true,
+        "files": [
+            "basic-Cases.json"
+        ]
+    },
+    {
+        "sobject": "Opportunity",
+        "saveRefs": false,
+        "resolveRefs": true,
+        "files": [
+            "basic-Opportunitys.json"
+        ]
+    }
+]

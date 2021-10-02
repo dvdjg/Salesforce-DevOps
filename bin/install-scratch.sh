@@ -41,6 +41,11 @@ echo "Importing sample data..."
 sfdx force:data:tree:import -p data/basic/basic-Account-Contact-Case-Opportunity-plan.json -u $ORG_ALIAS
 echo ""
 
+# Creación de registros desde CLI:
+# sfdx force:data:record:create -s Account -v "Name='Marriott Marquis' BillingStreet='780 Mission St' BillingCity='San Francisco' BillingState='CA' BillingPostalCode='94103' Phone='(415) 896-1600' Website='www.marriott.com'"
+# sfdx force:data:record:create -s Account -v "Name='Hilton Union Square' BillingStreet='333 O Farrell St' BillingCity='San Francisco' BillingState='CA' BillingPostalCode='94102' Phone='(415) 771-1400' Website='www.hilton.com'"
+# sfdx force:data:record:create -s Account -v "Name='Hyatt' BillingStreet='5 Embarcadero Center' BillingCity='San Francisco' BillingState='CA' BillingPostalCode='94111' Phone='(415) 788-1234' Website='www.hyatt.com'"
+
 echo "Opening org..."
 sfdx force:org:open -p lightning/page/home -u $ORG_ALIAS
 echo ""

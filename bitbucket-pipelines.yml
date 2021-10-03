@@ -8,7 +8,7 @@ pipelines:
           - pwd
           - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH"
           # Bitbucket pipelines will only clone the specific branch that triggered the build.
-          - git fetch origin "+refs/heads/*:refs/remotes/origin/*"
+          - git fetch origin # "+refs/heads/*:refs/remotes/origin/*"
           - git show-branch | head -n30
           - CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           - PARENT_BRANCH=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -v "$CURRENT_BRANCH" | head -n1)

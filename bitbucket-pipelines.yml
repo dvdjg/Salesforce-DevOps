@@ -5,22 +5,58 @@ pipelines:
         script:
           - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH"
           - pwd
-          - export TEST_VAR=Prueba
-
-  pull-requests:
-    'feature/*': # Pull request from feature branch to Trunk
-      - step: *diff_package
-      - step:
-          name: "Trunk Pull Request Validate Package"
-          script:
-          - echo $TEST_VAR
           # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|pro)$"
           # Bitbucket pipelines will only clone the specific branch that triggered the build.
-          - git log
+          #- git log
           - git fetch --all # "+refs/heads/*:refs/remotes/origin/*"
-          - git log
-          - git show-branch | head -n30
+          - git show-branch
+          - git fetch origin # "+refs/heads/*:refs/remotes/origin/*"
+          - git show-branch
+          - git branch -a
+          - git show-branch
+          - git diff --name-status origin/$BITBUCKET_PR_DESTINATION_BRANCH origin/$BITBUCKET_BRANCH
+          - git checkout $BITBUCKET_PR_DESTINATION_BRANCH
+          - git diff --name-status origin/$BITBUCKET_PR_DESTINATION_BRANCH origin/$BITBUCKET_BRANCH
+          - git checkout $BITBUCKET_BRANCH
+          - git diff --name-status origin/$BITBUCKET_PR_DESTINATION_BRANCH origin/$BITBUCKET_BRANCH
+          - git show-branch
+          #- git log
+          - git show-branch #| head -n30
+          - CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          - PARENT_BRANCH=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -v "$CURRENT_BRANCH" | head -n1)
+          - #PARENT_TRUNK=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -E "$TRUNK_REGEXP" | head -n1)
+          - PARENT_TRUNK=$BITBUCKET_PR_DESTINATION_BRANCH
+          - COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $PARENT_TRUNK)
+          - echo "CURRENT_BRANCH=$CURRENT_BRANCH  -  PARENT_BRANCH=$PARENT_BRANCH  -  PARENT_TRUNK=$PARENT_TRUNK  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR"
+          - mkdir -p delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./delta
+          - cat delta/package/package.xml
+
+  pull-requests:
+    'feature/*': # Pull request from feature branch to Trunk
+      - step:
+          name: "Trunk Pull Request Validate Package"
+          script:
+          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH"
+          - pwd
+          # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
+          - TRUNK_REGEXP="^(dev|int|uat|pre|pro)$"
+          # Bitbucket pipelines will only clone the specific branch that triggered the build.
+          #- git log
+          - git fetch --all # "+refs/heads/*:refs/remotes/origin/*"
+          - git show-branch
+          - git fetch origin # "+refs/heads/*:refs/remotes/origin/*"
+          - git show-branch
+          - git branch -a
+          - git show-branch
+          - git diff --name-status origin/$BITBUCKET_PR_DESTINATION_BRANCH origin/$BITBUCKET_BRANCH
+          - git checkout $BITBUCKET_PR_DESTINATION_BRANCH
+          - git diff --name-status origin/$BITBUCKET_PR_DESTINATION_BRANCH origin/$BITBUCKET_BRANCH
+          - git checkout $BITBUCKET_BRANCH
+          - git diff --name-status origin/$BITBUCKET_PR_DESTINATION_BRANCH origin/$BITBUCKET_BRANCH
+          - git show-branch
+          #- git log
+          - git show-branch #| head -n30
           - CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           - PARENT_BRANCH=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -v "$CURRENT_BRANCH" | head -n1)
           - #PARENT_TRUNK=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -E "$TRUNK_REGEXP" | head -n1)

@@ -3,10 +3,19 @@ pipelines:
   default: #These commands run for all branches unless specified otherwise
     - step: &diff_package
         script:
+          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH"
+          - pwd
+          - export TEST_VAR=Prueba
+
+  pull-requests:
+    'feature/*': # Pull request from feature branch to Trunk
+      - step: *diff_package
+      - step:
+          name: "Trunk Pull Request Validate Package"
+          script:
+          - echo $TEST_VAR
           # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|pro)$"
-          - pwd
-          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH"
           # Bitbucket pipelines will only clone the specific branch that triggered the build.
           - git log
           - git fetch --all # "+refs/heads/*:refs/remotes/origin/*"
@@ -21,12 +30,6 @@ pipelines:
           - cat delta/package/package.xml
           - cat delta/destructiveChanges/destructiveChanges.xml
 
-  pull-requests:
-    'feature/*': # Pull request from feature branch to Trunk
-      - step: *diff_package
-      - step:
-          name: "Trunk Pull Request Validate Package"
-          script:
           # By default, the CLI periodically checks for and installs updates.
           # Disable (true) this auto-update check to improve performance of CLI commands.
           - export SFDX_AUTOUPDATE_DISABLE=true

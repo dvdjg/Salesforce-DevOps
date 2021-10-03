@@ -4,12 +4,13 @@ pipelines:
     - step: &diff_package
         script:
           # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
+          - TRUNK_REGEXP="^(dev|int|uat|pre|pro)$"
           - pwd
-
-          - CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) 
-          - PARENT_BRANCH=$(git show-branch | grep '\*' | grep -v "$CURRENT_BRANCH" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
-          - PARENT_TRUNK=$(git show-branch | grep '\*' | grep -v "/" | head -n1 | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//')
-          - COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $PARENT_BRANCH)
+          - git show-branch | head -n30
+          - CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          - PARENT_BRANCH=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -v "$CURRENT_BRANCH" | head -n1)
+          - PARENT_TRUNK=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -E "$TRUNK_REGEXP" | head -n1)
+          - COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $PARENT_TRUNK)
           - echo "CURRENT_BRANCH=$CURRENT_BRANCH  -  PARENT_BRANCH=$PARENT_BRANCH  -  PARENT_TRUNK=$PARENT_TRUNK  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR"
           - mkdir -p delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./delta
           - cat delta/package/package.xml

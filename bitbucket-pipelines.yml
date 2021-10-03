@@ -4,18 +4,62 @@ pipelines:
     - step: &diff_package
         name: "Default pipeline"
         script:
-          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH"
+          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
           - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
-          - git fetch origin # "+refs/heads/*:refs/remotes/origin/*"
-          - mkdir -p delta; sgd --to HEAD --from dev --repo . --output ./delta
+          - git fetch origin
+          - git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"
+  branches :
+    'feature/*':
+      - step:
+          name: "Branch pipeline for features"
+          script:
+          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH   -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
+          - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
+          - sgd --to HEAD --from HEAD^ --repo . --output ./delta
+          - cat ./delta/package/package.xml          
+          - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
+          - git fetch origin
+          - git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"
+          - git show-branch
+          - git checkout $BITBUCKET_BRANCH
+          - git show-branch | head -n30
+          - CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          - PARENT_BRANCH=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -v "$CURRENT_BRANCH" | head -n1)
+          - PARENT_TRUNK=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -E "$TRUNK_REGEXP" | head -n1)
+          - DESTINATION_BRANCH=${BITBUCKET_PR_DESTINATION_BRANCH:-$PARENT_TRUNK}
+          - COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $DESTINATION_BRANCH)
+          - echo "CURRENT_BRANCH=$CURRENT_BRANCH  -  PARENT_BRANCH=$PARENT_BRANCH  -  PARENT_TRUNK=$PARENT_TRUNK  -  DESTINATION_BRANCH=$DESTINATION_BRANCH  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR"
+          - mkdir -p delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./delta
           - cat delta/package/package.xml
-
+          - cat delta/destructiveChanges/destructiveChanges.xml
+    dev:
+      - step:
+          name: "Branch pipeline for dev"
+          script:
+          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH   -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
+          - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
+          - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
+          - git fetch origin
+          - git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"
+          - git show-branch
+          - git checkout $BITBUCKET_BRANCH
+          - git show-branch | head -n30
+          - CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+          - PARENT_BRANCH=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -v "$CURRENT_BRANCH" | head -n1)
+          - PARENT_TRUNK=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -E "$TRUNK_REGEXP" | head -n1)
+          - DESTINATION_BRANCH=${BITBUCKET_PR_DESTINATION_BRANCH:-$PARENT_TRUNK}
+          - COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $DESTINATION_BRANCH)
+          - echo "CURRENT_BRANCH=$CURRENT_BRANCH  -  PARENT_BRANCH=$PARENT_BRANCH  -  PARENT_TRUNK=$PARENT_TRUNK  -  DESTINATION_BRANCH=$DESTINATION_BRANCH  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR"
+          - mkdir -p delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./delta
+          - cat delta/package/package.xml
+          - cat delta/destructiveChanges/destructiveChanges.xml
+        
   pull-requests:
     'feature/*': # Pull request from feature branch to Trunk
       - step:
           name: "Trunk Pull Request Validate Package"
           script:
-          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH"
+          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
           - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
           - git fetch origin
@@ -68,6 +112,6 @@ pipelines:
 
           - | # Show computed package
             [ -f mdapi/package.xml ] && cat mdapi/package.xml
-          - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL
+          - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL --checkonly
           after-script:
           - sfdx auth:logout --all --noprompt

@@ -1,6 +1,5 @@
 public with sharing class Temporal {
     public Temporal() {
-
     }
     
 	public String getAppVersion() {

@@ -2,18 +2,16 @@ image: eldeibiz/sfdxci:0.3
 pipelines:
   default: #These commands run for all branches unless specified otherwise
     - step: &diff_package
+        name: "Default pipeline"
         script:
           - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH"
           - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
           - git fetch origin # "+refs/heads/*:refs/remotes/origin/*"
-          - git log
-          - git checkout $BITBUCKET_PR_DESTINATION_BRANCH
+          - git checkout ${BITBUCKET_PR_DESTINATION_BRANCH:-dev}
           - git show-branch
-          - git log
           - git checkout $BITBUCKET_BRANCH
           - git show-branch | head -n30
-          - git log
           - CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           - PARENT_BRANCH=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -v "$CURRENT_BRANCH" | head -n1)
           - PARENT_TRUNK=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -E "$TRUNK_REGEXP" | head -n1)
@@ -32,13 +30,10 @@ pipelines:
           - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
           - git fetch origin # "+refs/heads/*:refs/remotes/origin/*"
-          - git log
-          - git checkout $BITBUCKET_PR_DESTINATION_BRANCH
+          - git checkout ${BITBUCKET_PR_DESTINATION_BRANCH:-dev}
           - git show-branch
-          - git log
           - git checkout $BITBUCKET_BRANCH
           - git show-branch | head -n30
-          - git log
           - CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           - PARENT_BRANCH=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -v "$CURRENT_BRANCH" | head -n1)
           - PARENT_TRUNK=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -E "$TRUNK_REGEXP" | head -n1)
@@ -86,4 +81,4 @@ pipelines:
             [ -f mdapi/package.xml ] && cat mdapi/package.xml
           - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL
           after-script:
-          - sfdx auth:logout --all
+          - sfdx auth:logout --all --noprompt

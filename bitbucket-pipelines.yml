@@ -8,6 +8,8 @@ pipelines:
           - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
           - git fetch  # "+refs/heads/*:refs/remotes/origin/*"
+          - git checkout --force $BITBUCKET_BRANCH
+          - git show-branch | head -n30
           - git checkout dev
           - git show-branch
           - git checkout $BITBUCKET_BRANCH

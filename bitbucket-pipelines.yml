@@ -34,11 +34,7 @@ pipelines:
       - step:
           name: "Branch pipeline for features"
           script:
-          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH   -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
-          - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
-          - mkdir -p .delta; sgd --to HEAD --from HEAD^ --repo . --output ./.delta
-          - cat ./.delta/package/package.xml          
-          - cat .delta/destructiveChanges/destructiveChanges.xml
+           - *common
     dev:
       - step:
           name: "Branch pipeline for dev"

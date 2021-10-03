@@ -15,9 +15,9 @@ pipelines:
           script:
           - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH   -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
           - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
-          - sgd --to HEAD --from HEAD^ --repo . --output ./delta
-          - cat ./delta/package/package.xml          
-          - cat delta/destructiveChanges/destructiveChanges.xml
+          - mkdir -p .delta; sgd --to HEAD --from HEAD^ --repo . --output ./.delta
+          - cat ./.delta/package/package.xml          
+          - cat .delta/destructiveChanges/destructiveChanges.xml
     dev:
       - step:
           name: "Branch pipeline for dev"
@@ -36,9 +36,9 @@ pipelines:
           - DESTINATION_BRANCH=${BITBUCKET_PR_DESTINATION_BRANCH:-$PARENT_TRUNK}
           - COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $DESTINATION_BRANCH)
           - echo "CURRENT_BRANCH=$CURRENT_BRANCH  -  PARENT_BRANCH=$PARENT_BRANCH  -  PARENT_TRUNK=$PARENT_TRUNK  -  DESTINATION_BRANCH=$DESTINATION_BRANCH  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR"
-          - mkdir -p delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./delta
-          - cat delta/package/package.xml
-          - cat delta/destructiveChanges/destructiveChanges.xml
+          - mkdir -p .delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./.delta
+          - cat .delta/package/package.xml
+          - cat .delta/destructiveChanges/destructiveChanges.xml
 
           # By default, the CLI periodically checks for and installs updates.
           # Disable (true) this auto-update check to improve performance of CLI commands.
@@ -66,8 +66,6 @@ pipelines:
 
           #Decrypt server key
           - openssl enc -nosalt -aes-256-cbc -d -in /assets/server.key.enc -out server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
-
-          - cat delta/package/package.xml
 
           - sfdx force:auth:jwt:grant --clientid $CONSUMER_KEY --username $SFDC_PRO_USER --jwtkeyfile server.key --setdefaultdevhubusername --setalias sfdx-ci --instanceurl $SFDC_PRO_URL
           - sfdx force:limits:api:display -u $SFDC_PRO_USER
@@ -96,9 +94,9 @@ pipelines:
           - DESTINATION_BRANCH=${BITBUCKET_PR_DESTINATION_BRANCH:-$PARENT_TRUNK}
           - COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $DESTINATION_BRANCH)
           - echo "CURRENT_BRANCH=$CURRENT_BRANCH  -  PARENT_BRANCH=$PARENT_BRANCH  -  PARENT_TRUNK=$PARENT_TRUNK  -  DESTINATION_BRANCH=$DESTINATION_BRANCH  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR"
-          - mkdir -p delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./delta
-          - cat delta/package/package.xml
-          - cat delta/destructiveChanges/destructiveChanges.xml
+          - mkdir -p .delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./.delta
+          - cat .delta/package/package.xml
+          - cat .delta/destructiveChanges/destructiveChanges.xml
 
           # By default, the CLI periodically checks for and installs updates.
           # Disable (true) this auto-update check to improve performance of CLI commands.
@@ -126,8 +124,6 @@ pipelines:
 
           #Decrypt server key
           - openssl enc -nosalt -aes-256-cbc -d -in /assets/server.key.enc -out server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
-
-          - cat delta/package/package.xml
 
           - sfdx force:auth:jwt:grant --clientid $CONSUMER_KEY --username $SFDC_PRO_USER --jwtkeyfile server.key --setdefaultdevhubusername --setalias sfdx-ci --instanceurl $SFDC_PRO_URL
           - sfdx force:limits:api:display -u $SFDC_PRO_USER

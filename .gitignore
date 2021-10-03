@@ -15,6 +15,9 @@ coverage/
 # Secrets
 .secrets/
 
+# Delta packages
+.delta/
+
 # Create your local copy from bin/.common-template.sh
 bin/.common.sh
 

@@ -38,9 +38,11 @@ pipelines:
           - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
           # Bajar información de la rama remota dev, ya que bitbucket sólo baja de la rama actual: git clone --branch="feature/US-00001-Span" --depth 50 https://dvdjg@bitbucket.org/dvdjg/devops.git
-          - git remote set-branches origin '*' # usar 'dev' para bajar info sólo de dev o '*' para bajarlo todo
+          - git remote set-branches origin 'dev' # usar 'dev' para bajar info sólo de dev o '*' para bajarlo todo
           - git fetch -v
           - DESTINATION_BRANCH=dev
+          - git checkout $DESTINATION_BRANCH
+          - git checkout $BITBUCKET_BRANCH
           - COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $DESTINATION_BRANCH)
           - echo "CURRENT_BRANCH=$CURRENT_BRANCH  -  DESTINATION_BRANCH=$DESTINATION_BRANCH  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR"
           - mkdir -p .delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./.delta

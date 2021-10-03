@@ -37,7 +37,9 @@ pipelines:
           - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
           - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
-          - git fetch origin
+          # Bajar información de la rama remota dev, ya que bitbucket sólo baja de la rama actual: git clone --branch="feature/US-00001-Span" --depth 50 https://dvdjg@bitbucket.org/dvdjg/devops.git
+          - git remote set-branches origin '*' # usar 'dev' para bajar info sólo de dev
+          - git fetch -v
           - git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"
           - git show-branch
           - git checkout $BITBUCKET_BRANCH

@@ -7,8 +7,8 @@ pipelines:
           - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH"
           - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
-          - git fetch origin # "+refs/heads/*:refs/remotes/origin/*"
-          - git checkout ${BITBUCKET_PR_DESTINATION_BRANCH:-dev}
+          - git fetch  # "+refs/heads/*:refs/remotes/origin/*"
+          - git checkout dev
           - git show-branch
           - git checkout $BITBUCKET_BRANCH
           - git show-branch | head -n30
@@ -30,7 +30,9 @@ pipelines:
           - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
           - git fetch origin # "+refs/heads/*:refs/remotes/origin/*"
-          - git checkout ${BITBUCKET_PR_DESTINATION_BRANCH:-dev}
+          - git checkout --force $BITBUCKET_BRANCH
+          - git show-branch | head -n30
+          - git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"
           - git show-branch
           - git checkout $BITBUCKET_BRANCH
           - git show-branch | head -n30

@@ -6,19 +6,8 @@ pipelines:
         script:
           - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH"
           - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
-          - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
           - git fetch origin # "+refs/heads/*:refs/remotes/origin/*"
-          - git checkout -t -b dev origin/dev
-          - git show-branch
-          - git checkout $BITBUCKET_BRANCH
-          - git show-branch | head -n30
-          - CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
-          - PARENT_BRANCH=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -v "$CURRENT_BRANCH" | head -n1)
-          - PARENT_TRUNK=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -E "$TRUNK_REGEXP" | head -n1)
-          - DESTINATION_BRANCH=${BITBUCKET_PR_DESTINATION_BRANCH:-$PARENT_TRUNK}
-          - COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $DESTINATION_BRANCH)
-          - echo "CURRENT_BRANCH=$CURRENT_BRANCH  -  PARENT_BRANCH=$PARENT_BRANCH  -  PARENT_TRUNK=$PARENT_TRUNK  -  DESTINATION_BRANCH=$DESTINATION_BRANCH  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR"
-          - mkdir -p delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./delta
+          - mkdir -p delta; sgd --to HEAD --from dev --repo . --output ./delta
           - cat delta/package/package.xml
 
   pull-requests:
@@ -29,7 +18,7 @@ pipelines:
           - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH"
           - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
-          - git fetch origin # "+refs/heads/*:refs/remotes/origin/*"
+          - git fetch origin
           - git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"
           - git show-branch
           - git checkout $BITBUCKET_BRANCH

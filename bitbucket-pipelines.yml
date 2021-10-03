@@ -40,9 +40,6 @@ pipelines:
           # Bajar información de la rama remota dev, ya que bitbucket sólo baja de la rama actual: git clone --branch="feature/US-00001-Span" --depth 50 https://dvdjg@bitbucket.org/dvdjg/devops.git
           - git remote set-branches origin '*' # usar 'dev' para bajar info sólo de dev
           - git fetch -v
-          - git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"
-          - git show-branch
-          - git checkout $BITBUCKET_BRANCH
           - git show-branch | head -n30
           - CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
           - PARENT_BRANCH=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -v "$CURRENT_BRANCH" | head -n1)

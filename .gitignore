@@ -42,9 +42,6 @@ node_modules/
 target/
 dist/
 
-# Encoded keys
-*.key.enc
-
 # Compiled Java class files
 *.class
 

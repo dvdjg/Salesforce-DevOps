@@ -35,8 +35,6 @@ pipelines:
           name: "Branch pipeline for features"
           script:
           - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
-          - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
-          - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
           # Bajar información de la rama remota dev, ya que bitbucket sólo baja de la rama actual: git clone --branch="feature/US-00001-Span" --depth 50 https://dvdjg@bitbucket.org/dvdjg/devops.git
           - git remote set-branches origin 'dev' # usar 'dev' para bajar info sólo de dev o '*' para bajarlo todo
           - git fetch -v
@@ -95,15 +93,15 @@ pipelines:
           - sfdx plugins --core
 
           #Decrypt server key
-          - openssl enc -nosalt -aes-256-cbc -d -in /assets/server.key.enc -out server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
+          - openssl enc -nosalt -aes-256-cbc -d -in ./assets/server.key.enc -out server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
 
           - sfdx force:auth:jwt:grant --clientid $CONSUMER_KEY --username $SFDC_PRO_USER --jwtkeyfile server.key --setdefaultdevhubusername --setalias sfdx-ci --instanceurl $SFDC_PRO_URL
           - sfdx force:limits:api:display -u $SFDC_PRO_USER
-          - sfdx force:source:convert -d mdapi
+          - sfdx force:source:convert -d mdapi --manifest .delta/package/package.xml
 
           - | # Show computed package
             [ -f mdapi/package.xml ] && cat mdapi/package.xml
-          - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL
+          - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL --loglevel fatal -l RunLocalTests
         
   pull-requests:
     'feature/*': # Pull request from feature branch to Trunk
@@ -153,14 +151,14 @@ pipelines:
           - sfdx plugins --core
 
           #Decrypt server key
-          - openssl enc -nosalt -aes-256-cbc -d -in /assets/server.key.enc -out server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
+          - openssl enc -nosalt -aes-256-cbc -d -in ./assets/server.key.enc -out server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
 
           - sfdx force:auth:jwt:grant --clientid $CONSUMER_KEY --username $SFDC_PRO_USER --jwtkeyfile server.key --setdefaultdevhubusername --setalias sfdx-ci --instanceurl $SFDC_PRO_URL
           - sfdx force:limits:api:display -u $SFDC_PRO_USER
-          - sfdx force:source:convert -d mdapi
+          - sfdx force:source:convert --outputdir mdapi --manifest .delta/package/package.xml
 
           - | # Show computed package
             [ -f mdapi/package.xml ] && cat mdapi/package.xml
-          - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL --checkonly
+          - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL --loglevel fatal -l RunLocalTests --checkonly
           after-script:
           - sfdx auth:logout --all --noprompt

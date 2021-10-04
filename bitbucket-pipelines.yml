@@ -121,6 +121,7 @@ pipelines:
           - sfdx force:org:create -s -f config/project-scratch-def.json -a scratch-org
           # Display navigation URL, but don’t launch browser.
           - sfdx force:org:open -r 
+          - sfdx force:org:display --verbose --json
           # Install Financial Services Cloud - https://help.salesforce.com/s/articleView?id=000323341&type=1
           - sfdx force:package:install --package=04t1E000000jbFt --wait 20 --publishwait 20 --noprompt --securitytype AllUsers
           # Install Financial Services Ext

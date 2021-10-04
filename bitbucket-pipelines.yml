@@ -23,6 +23,7 @@ pipelines:
   default: #These commands run for all branches unless specified otherwise
     - step: &diff_package
         name: "Default pipeline"
+        deployment: dev
         script:
           - *common
           #- echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
@@ -33,6 +34,7 @@ pipelines:
     'feature/*':
       - step:
           name: "Branch pipeline for features"
+          deployment: dev
           script:
           - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
           # Bajar información de la rama remota dev, ya que bitbucket sólo baja de la rama actual: git clone --branch="feature/US-00001-Span" --depth 50 https://dvdjg@bitbucket.org/dvdjg/devops.git
@@ -49,9 +51,10 @@ pipelines:
     dev:
       - step:
           name: "Branch pipeline for dev"
+          deployment: dev
           script:
+          # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
-          - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
           - git fetch origin
           - git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"
@@ -103,13 +106,36 @@ pipelines:
             [ -f mdapi/package.xml ] && cat mdapi/package.xml
           - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL --loglevel fatal -l RunLocalTests
         
+    dev-scratch:
+      - step:
+          name: "Branch pipeline for create a scratch org in dev"
+          deployment: dev
+          script:
+          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
+          #Decrypt server key
+          - openssl enc -nosalt -aes-256-cbc -d -in ./assets/server.key.enc -out server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
+
+          - sfdx force:auth:jwt:grant --clientid $CONSUMER_KEY --username $SFDC_PRO_USER --jwtkeyfile server.key --setdefaultdevhubusername --setalias sfdx-ci --instanceurl $SFDC_PRO_URL
+          - sfdx force:limits:api:display -u $SFDC_PRO_USER
+          # Create a scratch org, set it as your default, and give it an alias
+          - sfdx force:org:create -s -f config/project-scratch-def.json -a scratch-org
+          # Install Financial Services Cloud - https://help.salesforce.com/s/articleView?id=000323341&type=1
+          - sfdx force:package:install --package=04t1E000000jbFt
+          # Install Financial Services Ext
+          - sfdx force:package:install --package=04t1E000001Iql5
+          # FSC Post-Installation Tasks: https://developer.salesforce.com/docs/atlas.en-us.financial_services_cloud.meta/financial_services_cloud/fsc_admin_postinstall_tasks.htm
+          # Push source metadata to Scratch Org
+          - sfdx force:source:push
+          # echo "Importing sample data..."
+          - sfdx force:data:tree:import -p data/basic/basic-Account-Contact-Case-Opportunity-plan.json -u scratch-org
   pull-requests:
     'feature/*': # Pull request from feature branch to Trunk
       - step:
           name: "Trunk Pull Request Validate Package"
+          deployment: dev
           script:
+          # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
-          - pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
           - git fetch origin
           - git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"
@@ -159,7 +185,8 @@ pipelines:
 
           - | # Show computed package
             [ -f mdapi/package.xml ] && cat mdapi/package.xml
-          # After the validation, a deploy can be accelerated by using quick deploy: --validateddeployrequestid <VALIDATEDDEPLOYREQUESTID>     $ sfdx force:source:deploy -q 0Af9A00000FTM6pSAH
+          # After the validation, a deploy can be accelerated by using quick deploy: --validateddeployrequestid <VALIDATEDDEPLOYREQUESTID>
           - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL --loglevel fatal -l RunLocalTests --checkonly 
+          # sfdx force:source:deploy -q 0Af9A00000FTM6pSAH
           after-script:
           - sfdx auth:logout --all --noprompt

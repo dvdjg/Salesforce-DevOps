@@ -54,6 +54,10 @@ cat delta/package/package.xml
 
 
 git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit -n 50 --all
+
+## Bitbucket Pipelines - Mayo 2020
+https://youtu.be/hPTpN4CVQt0?t=1403
+
 ## References
 
 - https://blog.enree.co/2019/06/setting-up-sfdx-continuous-integration-using-bitbucket-pipelines-with-docker-image.html

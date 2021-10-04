@@ -1,7 +1,7 @@
 {
-  "orgName": "Demo company",
-  "edition": "Developer",
-  "features": ["EnableSetPasswordInApi"],
+  "orgName": "Scratch Org",
+  "edition": "Enterprise",
+  "features": ["EnableSetPasswordInApi","DebugApex","PersonAccounts","ContactsToMultipleAccounts", "FinancialServicesUser:5"],
   "language": "en_US",
   "settings": {
     "lightningExperienceSettings": {

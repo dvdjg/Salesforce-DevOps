@@ -1,7 +1,7 @@
 image: eldeibiz/sfdxci:0.3
 definitions:
   commonItems: &common
-    echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT" &&
+    echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT=$BITBUCKET_DEPLOYMENT_ENVIRONMENT" &&
     pwd &&
     TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$" &&
     git fetch origin &&
@@ -26,7 +26,7 @@ pipelines:
         deployment: dev
         script:
           - *common
-          #- echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
+          #- echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT=$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
           #- pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
           #- git fetch origin
           #- git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"
@@ -36,7 +36,7 @@ pipelines:
           name: "Branch pipeline for features"
           deployment: dev
           script:
-          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
+          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT=$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
           # Bajar información de la rama remota dev, ya que bitbucket sólo baja de la rama actual: git clone --branch="feature/US-00001-Span" --depth 50 https://dvdjg@bitbucket.org/dvdjg/devops.git
           - git remote set-branches origin 'dev' # usar 'dev' para bajar info sólo de dev o '*' para bajarlo todo
           - git fetch -v
@@ -44,7 +44,7 @@ pipelines:
           - git checkout $DESTINATION_BRANCH
           - git checkout $BITBUCKET_BRANCH
           - COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $DESTINATION_BRANCH)
-          - echo "CURRENT_BRANCH=$CURRENT_BRANCH  -  DESTINATION_BRANCH=$DESTINATION_BRANCH  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR"
+          - echo "DESTINATION_BRANCH=$DESTINATION_BRANCH  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR"
           - mkdir -p .delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./.delta
           - cat .delta/package/package.xml
           - cat .delta/destructiveChanges/destructiveChanges.xml
@@ -54,7 +54,7 @@ pipelines:
           deployment: dev
           script:
           # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
-          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
+          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT=$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
           - git fetch origin
           - git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"
@@ -111,7 +111,7 @@ pipelines:
           name: "Branch pipeline for create a scratch org in dev"
           deployment: dev
           script:
-          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
+          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT=$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
           #Decrypt server key
           - openssl enc -nosalt -aes-256-cbc -d -in ./assets/server.key.enc -out server.key -base64 -K $DECRYPTION_KEY -iv $DECRYPTION_IV
 
@@ -137,7 +137,7 @@ pipelines:
           deployment: dev
           script:
           # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
-          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT?$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
+          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT=$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
           - TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$"
           - git fetch origin
           - git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"

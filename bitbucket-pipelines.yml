@@ -120,9 +120,9 @@ pipelines:
           # Create a scratch org, set it as your default, and give it an alias
           - sfdx force:org:create -s -f config/project-scratch-def.json -a scratch-org
           # Install Financial Services Cloud - https://help.salesforce.com/s/articleView?id=000323341&type=1
-          - sfdx force:package:install --package=04t1E000000jbFt
+          - sfdx force:package:install --package=04t1E000000jbFt --wait 0 --publishwait 0 --noprompt --securitytype AllUsers
           # Install Financial Services Ext
-          - sfdx force:package:install --package=04t1E000001Iql5
+          - sfdx force:package:install --package=04t1E000001Iql5 --wait 0 --publishwait 0 --noprompt --securitytype AllUsers
           # FSC Post-Installation Tasks: https://developer.salesforce.com/docs/atlas.en-us.financial_services_cloud.meta/financial_services_cloud/fsc_admin_postinstall_tasks.htm
           # Push source metadata to Scratch Org
           - sfdx force:source:push

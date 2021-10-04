@@ -159,6 +159,7 @@ pipelines:
 
           - | # Show computed package
             [ -f mdapi/package.xml ] && cat mdapi/package.xml
-          - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL --loglevel fatal -l RunLocalTests --checkonly
+          # After the validation, a deploy can be accelerated by using quick deploy: --validateddeployrequestid <VALIDATEDDEPLOYREQUESTID>     $ sfdx force:source:deploy -q 0Af9A00000FTM6pSAH
+          - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL --loglevel fatal -l RunLocalTests --checkonly 
           after-script:
           - sfdx auth:logout --all --noprompt

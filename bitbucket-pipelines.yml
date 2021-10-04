@@ -119,17 +119,17 @@ pipelines:
           - sfdx force:limits:api:display -u $SFDC_PRO_USER
           # Create a scratch org, set it as your default, and give it an alias
           - sfdx force:org:create -s -f config/project-scratch-def.json -a scratch-org
+          # Display navigation URL, but don’t launch browser.
+          - sfdx force:org:open -r 
           # Install Financial Services Cloud - https://help.salesforce.com/s/articleView?id=000323341&type=1
-          - sfdx force:package:install --package=04t1E000000jbFt --wait 0 --publishwait 0 --noprompt --securitytype AllUsers
+          - sfdx force:package:install --package=04t1E000000jbFt --wait 20 --publishwait 20 --noprompt --securitytype AllUsers
           # Install Financial Services Ext
-          - sfdx force:package:install --package=04t1E000001Iql5 --wait 0 --publishwait 0 --noprompt --securitytype AllUsers
+          - sfdx force:package:install --package=04t1E000001Iql5 --wait 20 --publishwait 20 --noprompt --securitytype AllUsers
           # FSC Post-Installation Tasks: https://developer.salesforce.com/docs/atlas.en-us.financial_services_cloud.meta/financial_services_cloud/fsc_admin_postinstall_tasks.htm
           # Push source metadata to Scratch Org
           - sfdx force:source:push
           # echo "Importing sample data..."
           - sfdx force:data:tree:import -p data/basic/basic-Account-Contact-Case-Opportunity-plan.json -u scratch-org
-          # Display navigation URL, but don’t launch browser.
-          - sfdx force:org:open -r 
   pull-requests:
     'feature/*': # Pull request from feature branch to Trunk
       - step:

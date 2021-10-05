@@ -131,6 +131,7 @@ pipelines:
           - sfdx force:source:push
           # echo "Importing sample data..."
           - sfdx force:data:tree:import -p data/basic/basic-Account-Contact-Case-Opportunity-plan.json -u scratch-org
+          
   pull-requests:
     'feature/*': # Pull request from feature branch to Trunk
       - step:

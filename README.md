@@ -52,7 +52,7 @@ mkdir -p delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./delta
 cat delta/package/package.xml
 
 
-
+# Log gráfico
 git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit -n 50 --all
 
 ## Bitbucket Pipelines - Mayo 2020

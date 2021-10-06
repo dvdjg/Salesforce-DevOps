@@ -15,6 +15,9 @@ coverage/
 # Secrets
 .secrets/
 
+# Delta packages
+.delta/
+
 # Create your local copy from bin/.common-template.sh
 bin/.common.sh
 
@@ -38,9 +41,6 @@ node_modules/
 # Maven
 target/
 dist/
-
-# Encoded keys
-*.key.enc
 
 # Compiled Java class files
 *.class

@@ -1,35 +1,11 @@
-image: eldeibiz/sfdxci:0.3
-definitions:
-  commonItems: &common
-    echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT=$BITBUCKET_DEPLOYMENT_ENVIRONMENT" &&
-    pwd &&
-    TRUNK_REGEXP="^(dev|int|uat|pre|hot|pro)$" &&
-    git fetch origin &&
-    git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}" &&
-    git show-branch &&
-    git checkout $BITBUCKET_BRANCH &&
-    git show-branch | head -n30 &&
-    CURRENT_BRANCH=$(git rev-parse --abbrev-ref HEAD) &&
-    PARENT_BRANCH=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -v "$CURRENT_BRANCH" | head -n1) &&
-    PARENT_TRUNK=$(git show-branch | grep '^[^\[]*\*' | sed 's/.*\[\(.*\)\].*/\1/' | sed 's/[\^~].*//' | grep -E "$TRUNK_REGEXP" | head -n1) &&
-    DESTINATION_BRANCH=${BITBUCKET_PR_DESTINATION_BRANCH:-$PARENT_TRUNK} &&
-    COMMIT_ANCESTOR=$(git merge-base --octopus HEAD $DESTINATION_BRANCH) &&
-    echo "CURRENT_BRANCH=$CURRENT_BRANCH  -  PARENT_BRANCH=$PARENT_BRANCH  -  PARENT_TRUNK=$PARENT_TRUNK  -  DESTINATION_BRANCH=$DESTINATION_BRANCH  -  COMMIT_ANCESTOR=$COMMIT_ANCESTOR" &&
-    mkdir -p .delta; sgd --to HEAD --from $COMMIT_ANCESTOR --repo . --output ./.delta &&
-    cat .delta/package/package.xml &&
-    cat .delta/destructiveChanges/destructiveChanges.xml 
-
+image: eldeibiz/sfdxci:0.6
 pipelines:
   default: #These commands run for all branches unless specified otherwise
-    - step: &diff_package
+    - step: 
         name: "Default pipeline"
         deployment: dev
         script:
-          - *common
-          #- echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT=$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
-          #- pwd # Typical bitbucket dir: /opt/atlassian/pipelines/agent/build
-          #- git fetch origin
-          #- git checkout "${BITBUCKET_PR_DESTINATION_BRANCH:-dev}"
+          - echo "BITBUCKET_BRANCH=$BITBUCKET_BRANCH  -  BITBUCKET_TAG=$BITBUCKET_TAG  -  BITBUCKET_PR_DESTINATION_BRANCH=$BITBUCKET_PR_DESTINATION_BRANCH  -  BITBUCKET_DEPLOYMENT_ENVIRONMENT=$BITBUCKET_DEPLOYMENT_ENVIRONMENT"
   branches :
     'feature/*':
       - step:
@@ -105,7 +81,9 @@ pipelines:
           - | # Show computed package
             [ -f mdapi/package.xml ] && cat mdapi/package.xml
           - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL --loglevel fatal -l RunLocalTests
-        
+          after-script:
+          - sfdx auth:logout --all --noprompt
+          
     dev-scratch:
       - step:
           name: "Branch pipeline for create a scratch org in dev"
@@ -131,6 +109,9 @@ pipelines:
           - sfdx force:source:push
           # echo "Importing sample data..."
           - sfdx force:data:tree:import -p data/basic/basic-Account-Contact-Case-Opportunity-plan.json -u scratch-org
+
+          after-script:
+          - sfdx auth:logout --all --noprompt
 
   pull-requests:
     'feature/*': # Pull request from feature branch to Trunk
@@ -191,7 +172,7 @@ pipelines:
             [ -f mdapi/package.xml ] && cat mdapi/package.xml
           # After the validation, a deploy can be accelerated by using quick deploy: --validateddeployrequestid <VALIDATEDDEPLOYREQUESTID>
           - sfdx force:mdapi:deploy -d mdapi -u $SFDC_PRO_USER -w 30 --testlevel $TESTLEVEL --loglevel fatal -l RunLocalTests --checkonly 
-          # sfdx force:source:deploy -q 0Af9A00000FTM6pSAH
+          # A quick deploy can be automated from Bitbucket using the returned deployment ID, ie.: sfdx force:source:deploy -q 0Af9A00000FTM6pSAH
           
           after-script:
           - sfdx auth:logout --all --noprompt

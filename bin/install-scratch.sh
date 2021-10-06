@@ -26,8 +26,9 @@ sfdx force:org:create -s -f config/project-scratch-def.json --durationdays 30 --
 echo "Pushing source..."
 sfdx force:source:push
 
-#echo "Assigning permission sets..."
+echo "Assigning permission sets..."
 sfdx force:user:permset:assign -n Integration
+
 
 # To delete Data:
 # sfdx force:data:soql:query -q "SELECT Id FROM Opportunity" --resultformat csv > delete.csv; sfdx force:data:bulk:delete -s Opportunity -f delete.csv 

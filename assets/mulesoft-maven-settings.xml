@@ -1,0 +1,20 @@
+<profile>
+    <id>Mule Org</id>
+    <activation>ory>
+        <activeByDefault>true</activeByDefault>
+    </activation>>MuleSoft Repository</name>
+    <repositories>ttps://repository-master.mulesoft.org/releases/</url>
+        <repository>default</layout>
+            <id>mulesoft-releases</id>
+            <name>MuleSoft Repository</name>
+            <url>https://repository-master.mulesoft.org/releases/</url>
+            <layout>default</layout>Repository</name>
+        </repository>s://repository-master.mulesoft.org/snapshots/</url>
+        <repository>default</layout>
+            <id>mulesoft-snapshots</id>
+            <name>MuleSoft Snapshot Repository</name>
+            <url>https://repository-master.mulesoft.org/snapshots/</url>
+            <layout>default</layout>
+        </repository>nes/agent/build $ mvn clean package deploy -DmuleDeploy -Dmule.version="4.3.0" -Danypoint.username=
+    </repositories>ypoint.password=$PW -Dcloudhub.app="devops-mule" -Dcloudhub.environment="Sandbox" -Dcloudhub.worker="
+</profile>

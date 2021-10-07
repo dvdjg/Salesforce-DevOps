@@ -23,12 +23,20 @@ sfdx force:org:create -s -f config/project-scratch-def.json --durationdays 30 --
 #   }
 # }
 
+echo "Launching browser..."
+sfdx force:org:open 
+
+echo "Installing Financial Services Cloud..."
+sfdx force:package:install --package=04t1E000000jbFt --wait 20 --publishwait 20 --noprompt --securitytype AllUsers
+
+echo "Installing Financial Services Ext..."
+sfdx force:package:install --package=04t1E000001Iql5 --wait 10 --publishwait 10 --noprompt --securitytype AllUsers
+
 echo "Pushing source..."
 sfdx force:source:push
 
 echo "Assigning permission sets..."
-sfdx force:user:permset:assign -n Integration
-
+sfdx force:user:permset:assign -n Integration,Advisor,PersonalBanker,RelationshipManager
 
 # To delete Data:
 # sfdx force:data:soql:query -q "SELECT Id FROM Opportunity" --resultformat csv > delete.csv; sfdx force:data:bulk:delete -s Opportunity -f delete.csv 
